@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Три контура и пять узлов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&family=Golos+Text:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#EDEFEC; --surface:#F7F8F6; --surface-2:#E4E8E3; --surface-3:#DCE2DC;
+  --ink:#16211D; --ink-2:#33443E; --muted:#5C6963;
+  --line:#D2D8D1; --line-soft:#DFE4DE;
+  --deep:#1F5E56; --deep-soft:#D8E5E2;
+  --hot:#A8462A; --hot-soft:#F2E0D9;
+  --wait:#7A6A1F; --wait-soft:#EDE6CD;
+  --go:#356B45; --go-soft:#DAE7DC;
+  --maxw:1200px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --ground:#0F1513; --surface:#161F1C; --surface-2:#1D2723; --surface-3:#243029;
+  --ink:#E5EBE7; --ink-2:#C2CDC7; --muted:#8E9D96;
+  --line:#26332E; --line-soft:#1F2B27;
+  --deep:#5FBFAE; --deep-soft:#183531;
+  --hot:#E08A66; --hot-soft:#39231A;
+  --wait:#C9B45F; --wait-soft:#302B14;
+  --go:#71B383; --go-soft:#1A2F1E;
+}}
+:root[data-theme="dark"]{
+  --ground:#0F1513; --surface:#161F1C; --surface-2:#1D2723; --surface-3:#243029;
+  --ink:#E5EBE7; --ink-2:#C2CDC7; --muted:#8E9D96;
+  --line:#26332E; --line-soft:#1F2B27;
+  --deep:#5FBFAE; --deep-soft:#183531;
+  --hot:#E08A66; --hot-soft:#39231A;
+  --wait:#C9B45F; --wait-soft:#302B14;
+  --go:#71B383; --go-soft:#1A2F1E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"Golos Text","Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased}
+img{max-width:100%}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px 100px}
+a{color:var(--deep)}
+:focus-visible{outline:2px solid var(--deep);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* --- шапка --- */
+header.top{border-bottom:1px solid var(--line);margin-bottom:44px;padding:46px 0 26px}
+.eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+h1{font-family:Literata,Georgia,serif;font-weight:700;font-size:clamp(31px,5.2vw,50px);
+  line-height:1.06;letter-spacing:-.02em;margin:0 0 18px;text-wrap:balance}
+.lede{max-width:64ch;margin:0;color:var(--ink-2);font-size:16.5px}
+.counters{display:flex;flex-wrap:wrap;margin-top:28px;border-top:1px solid var(--line-soft)}
+.counters div{padding:14px 26px 4px 0;margin-right:26px;border-right:1px solid var(--line-soft)}
+.counters div:last-child{border-right:none;margin-right:0}
+.counters b{display:block;font-family:"IBM Plex Mono",monospace;font-size:25px;font-weight:500;
+  color:var(--deep);font-variant-numeric:tabular-nums;line-height:1.15}
+.counters b.gap{color:var(--hot)}
+.counters span{font-size:12px;color:var(--muted)}
+
+section{margin-bottom:60px}
+h2{font-family:Literata,Georgia,serif;font-weight:700;font-size:26px;letter-spacing:-.015em;margin:0 0 7px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 24px;max-width:72ch}
+h2 .badge{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);font-weight:400;margin-left:10px;vertical-align:middle}
+
+/* --- вертикаль --- */
+.ladder{display:grid;gap:1px;background:var(--line-soft);border:1px solid var(--line-soft)}
+.rung{background:var(--surface);display:grid;grid-template-columns:120px 150px 1fr;gap:18px;
+  padding:13px 16px;align-items:baseline}
+.rung .lvl{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--deep)}
+.rung .mark{font-size:13px;color:var(--muted)}
+.rung .ex{font-size:14px;color:var(--ink-2)}
+.rung.hole{background:var(--hot-soft)}
+.rung.hole .lvl{color:var(--hot)}
+.rung.hole .ex{color:var(--ink)}
+@media(max-width:760px){.rung{grid-template-columns:1fr;gap:3px}}
+
+/* --- узлы --- */
+.knot{border:1px solid var(--line);background:var(--surface);margin-bottom:14px}
+.knot.root{border-color:var(--hot);border-width:2px}
+.knot-head{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:baseline;
+  padding:16px 20px 12px}
+.knot-n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--hot);letter-spacing:.08em}
+.knot-head h3{font-family:Literata,Georgia,serif;font-size:20px;font-weight:600;margin:0;line-height:1.2}
+.knot-kind{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.knot-body{padding:0 20px 18px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:800px){.knot-body{grid-template-columns:1fr;gap:16px}
+  .knot-head{grid-template-columns:auto 1fr;padding-bottom:8px}
+  .knot-kind{grid-column:1/-1}}
+.knot-body p{margin:0 0 9px;font-size:14px;color:var(--ink-2)}
+.knot-body p:last-child{margin-bottom:0}
+.chain{font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.85;color:var(--muted);
+  background:var(--surface-2);padding:12px 14px;overflow-x:auto}
+.chain b{color:var(--ink);font-weight:500}
+.chain .arrow{color:var(--hot)}
+.sym{font-size:13px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--line-soft)}
+.sym b{color:var(--ink-2);font-weight:600}
+
+/* --- контуры --- */
+.circuit{border:1px solid var(--line);margin-bottom:22px}
+.circuit-head{background:var(--surface-2);padding:15px 20px;display:flex;flex-wrap:wrap;
+  gap:6px 16px;align-items:baseline;border-bottom:1px solid var(--line)}
+.circuit-head h3{font-family:Literata,Georgia,serif;font-size:21px;font-weight:600;margin:0}
+.circuit-head .tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--deep)}
+.circuit-head .rule{font-size:13px;color:var(--muted);flex-basis:100%}
+.areas{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1px;background:var(--line-soft)}
+.area{background:var(--surface);padding:18px 20px 20px}
+.area > h4{font-family:Literata,Georgia,serif;font-size:17.5px;font-weight:600;margin:0 0 3px;
+  line-height:1.25;display:flex;align-items:baseline;gap:8px}
+.area > h4 .num{font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:400;color:var(--deep)}
+.area .note{margin:0 0 12px;font-size:12.5px;color:var(--muted)}
+.branch{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);margin:15px 0 6px;padding-bottom:4px;
+  border-bottom:1px solid var(--line-soft)}
+ul.tasks{list-style:none;margin:0;padding:0}
+ul.tasks li{display:grid;grid-template-columns:58px 1fr;gap:10px;padding:6px 0;
+  border-bottom:1px solid var(--line-soft);font-size:13.5px;align-items:baseline}
+ul.tasks li:last-child{border-bottom:none}
+ul.tasks li.flag{background:var(--hot-soft);margin:0 -10px;padding-left:10px;padding-right:10px}
+.pill{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.pill.hot{color:var(--hot);font-weight:500}
+.pill.stop{color:var(--wait);font-weight:500}
+.pill.go{color:var(--go)}
+.tx small{display:block;color:var(--muted);font-size:12px;margin-top:1px}
+
+/* --- таблицы --- */
+.tablewrap{overflow-x:auto;border:1px solid var(--line-soft)}
+table{border-collapse:collapse;width:100%;min-width:640px;background:var(--surface);font-size:13.5px}
+th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);text-align:left;font-weight:400;padding:11px 14px;
+  border-bottom:1px solid var(--line);background:var(--surface-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.name{font-weight:600;white-space:nowrap}
+td.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+td .hot{color:var(--hot);font-weight:500}
+td .miss{color:var(--hot);font-family:"IBM Plex Mono",monospace;font-size:12px}
+td small{display:block;color:var(--muted);font-size:12px}
+
+/* --- полосы --- */
+.strips{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:1px;
+  background:var(--line-soft);border:1px solid var(--line-soft)}
+.strip{background:var(--surface);padding:18px 20px 20px}
+.strip h3{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--deep);margin:0 0 4px}
+.strip .what{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+.strip ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.strip li{font-size:13.5px;color:var(--ink-2);padding-left:13px;position:relative}
+.strip li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;
+  background:var(--deep);border-radius:50%}
+.strip li b{color:var(--ink);font-weight:600}
+
+/* --- ритм --- */
+.rhythm{display:grid;grid-template-columns:170px 1fr;gap:1px;background:var(--line-soft);
+  border:1px solid var(--line-soft)}
+.rhythm > div{background:var(--surface);padding:15px 18px}
+.rhythm .when{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--deep);
+  letter-spacing:.06em;text-transform:uppercase}
+.rhythm .what2{font-size:13.5px;color:var(--ink-2)}
+.rhythm .what2 small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+@media(max-width:640px){.rhythm{grid-template-columns:1fr}}
+
+/* --- следующий шаг --- */
+.next{border:1px solid var(--deep);background:var(--deep-soft);padding:26px}
+.next h2{margin-bottom:12px}
+.next ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:11px;font-size:14.5px}
+.next li b{font-weight:600}
+.next p.warn{margin:20px 0 0;padding-top:15px;border-top:1px solid var(--line);
+  font-size:13.5px;color:var(--ink-2)}
+footer{border-top:1px solid var(--line);padding-top:22px;font-size:12.5px;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:6px 28px}
+footer code{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">Выгрузка головы · 7 сентября 2026 · редакция 2</p>
+  <h1>Три контура и пять узлов</h1>
+  <p class="lede">Всё, что было сказано за три захода, разложено по одной структуре — и по ролям в системе, а не в один плоский ряд. Области здесь не равны друг другу: одни держат, другие кормят, третьи строятся. Узлы выявлены по причинным цепочкам, поэтому часть того, что казалось главным, оказалась симптомом.</p>
+  <div class="counters">
+    <div><b>3</b><span>контура</span></div>
+    <div><b>9</b><span>областей</span></div>
+    <div><b>62</b><span>проекта</span></div>
+    <div><b>5</b><span>узлов</span></div>
+    <div><b>11</b><span>человек в системе</span></div>
+    <div><b class="gap">0</b><span>целей с датой</span></div>
+    <div><b class="gap">2</b><span>ключевых числа не посчитаны</span></div>
+  </div>
+</header>
+
+<section>
+  <h2>Вертикаль <span class="badge">где стоит что</span></h2>
+  <p class="sub">Шесть уровней высоты. Верх и низ у тебя заполнены плотно, а середина пуста — и именно через неё проходит вся приоритизация. Пустая строка отмечена цветом: это не оформление, а диагноз.</p>
+  <div class="ladder">
+    <div class="rung">
+      <span class="lvl">Смысл</span><span class="mark">не меняется</span>
+      <span class="ex">Два корня, оба настоящие. <b>Служение:</b> «Мы — русло» — через нас человек узнаёт, зачем пришёл, и получает, чем это исполнить. <b>Защита:</b> безопасность и достаток семьи в нестабильное время — чтобы в случае чего было проще, чтобы образование, окружение, еда, радость, и чтобы богатство множилось в поколениях</span>
+    </div>
+    <div class="rung">
+      <span class="lvl">Видение</span><span class="mark">3–5 лет</span>
+      <span class="ex">Холдинг-концерн на дарах: люди-владельцы своих направлений при тебе, общая инфраструктура — IT плюс полевые способности круга. Пережить тебя, детей, внуков. Внутри него — Юя как «это я, местами лучше меня»: сначала подсказывает исполнительным директорам, потом выходит на рынок. Ты сам сказал: всё по факту про одно — нейронка собирает данные и управляет на основании своего анализа</span>
+    </div>
+    <div class="rung hole">
+      <span class="lvl">Цели</span><span class="mark">итог с датой</span>
+      <span class="ex">Пусто. Ни одной. Между «мы — русло» и шестьюдесятью двумя проектами нет ни одного измеримого результата с числом и сроком — поэтому все проекты формально равны, и выбор каждый раз делается заново, по интересу момента</span>
+    </div>
+    <div class="rung">
+      <span class="lvl">Области</span><span class="mark">не завершаются</span>
+      <span class="ex">Девять, сгруппированы в три контура ниже</span>
+    </div>
+    <div class="rung">
+      <span class="lvl">Проекты</span><span class="mark">можно сказать «готово»</span>
+      <span class="ex">62 штуки</span>
+    </div>
+    <div class="rung">
+      <span class="lvl">Задачи</span><span class="mark">одно действие</span>
+      <span class="ex">Намеренно не расписаны. По одному следующему действию на активный проект — на проходе 3, иначе получится 700 пунктов, в которые никто не заходит</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Пять узлов <span class="badge">по причинным цепочкам</span></h2>
+  <p class="sub">Узел — не «то, что горит», а то, через что проходит несколько цепочек: разблокируешь его — освободится больше всего. По этому критерию режим и лендинг оказались следствиями, а не причинами, и переехали вниз.</p>
+
+  <div class="knot root">
+    <div class="knot-head">
+      <span class="knot-n">01</span>
+      <h3>Всё замкнуто на одного человека</h3>
+      <span class="knot-kind">корневой</span>
+    </div>
+    <div class="knot-body">
+      <div>
+        <p>Пять направлений упираются в тебя, и ни одно не может двинуться без твоего личного участия в создании ценности. Маркетинг Суши Мамы — «другого человека, к сожалению, нет». Книги ждут, пока ты сделаешь лендинг. Центр — «надо толкнуть от меня, дальше по накатанной». B2B — конструируешь ты. Юю докручиваешь ты. Николаю нужен продукт от тебя.</p>
+        <p class="sym"><b>Ты уже нашёл лекарство и не применил к себе.</b> «Юя — это я, местами лучше меня, может подсказывать исполнительным директорам». Ты строишь замену узкого места в чужих бизнесах, оставаясь узким местом в своём.</p>
+      </div>
+      <div class="chain">
+        всё создаётся тобой <span class="arrow">→</span><br>
+        твой ресурс конечен <span class="arrow">→</span><br>
+        очередь из пяти направлений <span class="arrow">→</span><br>
+        любая пауза = <b>стоп везде</b> <span class="arrow">→</span><br>
+        добираешь ночами <span class="arrow">→</span><br>
+        режим ломается <span class="arrow">→</span><br>
+        ресурс ещё меньше
+      </div>
+    </div>
+  </div>
+
+  <div class="knot root">
+    <div class="knot-head">
+      <span class="knot-n">02</span>
+      <h3>Нет критерия выбора</h3>
+      <span class="knot-kind">корневой</span>
+    </div>
+    <div class="knot-body">
+      <div>
+        <p>Ноль целей на 62 проекта означает, что нет способа сказать, какой из них важнее. Тогда выбор делает не критерий, а интерес момента — и включается названный тобой же паттерн: «я люблю усложнять, там уже было неплохо, а я ещё разделил».</p>
+        <p class="sym"><b>Симптом виден в книгах.</b> Продукт готов, метод построен, цепочка из пяти агентов собрана, цена 30 000 ₽ при малой себестоимости — и всё стоит на лендинге, потому что «фокус внимания сместился». Это не лень: это отсутствие рамки, которая удержала бы фокус на месте.</p>
+      </div>
+      <div class="chain">
+        нет целей <span class="arrow">→</span><br>
+        все проекты равны <span class="arrow">→</span><br>
+        выбор по новизне <span class="arrow">→</span><br>
+        «люблю усложнять» <span class="arrow">→</span><br>
+        фокус уезжает <span class="arrow">→</span><br>
+        <b>ничто не доводится до денег</b> <span class="arrow">→</span><br>
+        нужен доход <span class="arrow">→</span><br>
+        возврат в операционку
+      </div>
+    </div>
+  </div>
+
+  <div class="knot root">
+    <div class="knot-head">
+      <span class="knot-n">03</span>
+      <h3>Деньги не измеряются</h3>
+      <span class="knot-kind">корневой</span>
+    </div>
+    <div class="knot-body">
+      <div>
+        <p>Главный ресурс не имеет обратной связи. Не посчитано, сколько нужно в месяц на семью — то есть нет ответа на вопрос «сколько достаточно». Не посчитан долг Гели — размер того, о чём неприятно думать, неизвестен. «Суть.Деньги» готов и не запущен. «Даю-беру» не объявлено, бизнесы тебе не платят. Миллион лежит на счёте Суши Мамы невыведенным.</p>
+        <p class="sym"><b>Отсюда же тревога.</b> Без числа «достаточно» любая сумма ощущается недостаточной, а страх за безопасность семьи не имеет дна — и толкает открывать ещё направления вместо того, чтобы доводить существующие.</p>
+      </div>
+      <div class="chain">
+        нет учёта <span class="arrow">→</span><br>
+        нет числа «сколько нужно» <span class="arrow">→</span><br>
+        нет критерия «достаточно» <span class="arrow">→</span><br>
+        <b>нельзя выбрать цель</b> <span class="arrow">→</span><br>
+        (замыкает на узел 02) <span class="arrow">→</span><br>
+        и отдельно: <b>тревога без дна</b> <span class="arrow">→</span><br>
+        ещё направления
+      </div>
+    </div>
+  </div>
+
+  <div class="knot">
+    <div class="knot-head">
+      <span class="knot-n">04</span>
+      <h3>Режим — следствие, а не причина</h3>
+      <span class="knot-kind">производный</span>
+    </div>
+    <div class="knot-body">
+      <div>
+        <p>Отбой 02–04, подъём 11–12. Раньше я записал это как корень — неверно. Ты уходишь в ночь потому, что днём фрагментирован и всё висит на тебе; ночь — единственное время без запросов. Значит силой воли это не чинится: оно снимается узлами 01–03.</p>
+        <p class="sym"><b>Но одна внешняя рамка работает сразу.</b> Садик к 8 — не задача про детей, а якорь дня, который ставится не тобой. Ты сам сказал: получалось раз пять от силы. И у Юли уже есть встречная мотивация вставать раньше — под центр.</p>
+      </div>
+      <div class="chain">
+        всё на тебе (01) <span class="arrow">→</span><br>
+        день фрагментирован <span class="arrow">→</span><br>
+        работа уходит в ночь <span class="arrow">→</span><br>
+        подъём в 11–12 <span class="arrow">→</span><br>
+        дети в садик к 10–11 <span class="arrow">→</span><br>
+        план Юли не работает <span class="arrow">→</span><br>
+        <b>эмоциональные качели</b> <span class="arrow">→</span><br>
+        их получает Юля
+      </div>
+    </div>
+  </div>
+
+  <div class="knot">
+    <div class="knot-head">
+      <span class="knot-n">05</span>
+      <h3>Полевой контур без обслуживания</h3>
+      <span class="knot-kind">по твоей же модели</span>
+    </div>
+    <div class="knot-body">
+      <div>
+        <p>Отливок нет полгода — при том, что в твоей системе отливка это ежемесячная диагностика команды, а отливщик стоит приоритетом №1 в каталоге даров. Угла памяти рода в доме нет. С домовым здороваетесь редко, камушки заброшены — он сам об этом сказал. Двор зарос, мусор.</p>
+        <p class="sym"><b>Почему это не быт.</b> По твоей же модели дом — пятый член семьи, ты держатель оси, а твоё состояние транслируется детям напрямую. Милана не воспринимает атмосферу — она ею становится. Запущенный двор и невыключенный диагностический прибор здесь одного порядка.</p>
+      </div>
+      <div class="chain">
+        отливки выключены <span class="arrow">→</span><br>
+        нет диагностики команды <span class="arrow">→</span><br>
+        проблемы видны по факту <span class="arrow">→</span><br>
+        <b>и параллельно:</b> <span class="arrow">→</span><br>
+        гигиена дома ослабла <span class="arrow">→</span><br>
+        поле дома мутнеет <span class="arrow">→</span><br>
+        первыми получают дети
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Три контура <span class="badge">роль области в системе</span></h2>
+  <p class="sub">Девять областей не равны. Опора не приносит денег, но обесценивает всё, когда ломается. Источники кормят сейчас. Стройка забирает ресурс, чтобы стать источником. Смешивать их в одном списке — значит сравнивать несравнимое.</p>
+
+  <div class="circuit">
+    <div class="circuit-head">
+      <h3>Контур A · Опора</h3>
+      <span class="tag">не приносит денег · ломается — рушится всё</span>
+      <span class="rule">Правило контура: сюда вкладываются не потому, что окупится, а потому, что без этого остальные два контура не работают. Здесь живут четыре узла из пяти.</span>
+    </div>
+    <div class="areas">
+
+      <div class="area">
+        <h4><span class="num">A1</span> Тело и режим</h4>
+        <p class="note">Головные боли после расстановок ушли — научился управлять. Остальное в порядке, кроме одного.</p>
+        <ul class="tasks">
+          <li class="flag"><span class="pill hot">горит</span><span class="tx">Войти в план лечения зубов<small>Двух нет, место на один, зеркальный опустился — поднимать, брекеты, удалить восьмёрки. Болит, в историю не входил</small></span></li>
+          <li><span class="pill hot">горит</span><span class="tx">Якорь дня: садик к 8<small>Внешняя рамка, которую ставишь не ты. Получалось раз пять</small></span></li>
+          <li><span class="pill"></span><span class="tx">Начать носить кольцо Oura<small>Лежит. Без него нет данных о сне вообще</small></span></li>
+          <li><span class="pill"></span><span class="tx">Завести данные сна в умный дом<small>Чтобы вводные были не по памяти</small></span></li>
+        </ul>
+      </div>
+
+      <div class="area">
+        <h4><span class="num">A2</span> Поле, канал и круг</h4>
+        <p class="note">Рисхан освобождён от долгов, на его месте Бабай — белый, отвечает по делу, соблюдает законы. Вызов Рисхана обратно работает. Фигурки оказались не твоим форматом; пошло на людях.</p>
+        <ul class="tasks">
+          <li class="flag"><span class="pill hot">горит</span><span class="tx">Возобновить отливки<small>Полгода без диагностики. Твой же приоритет №1 в каталоге даров</small></span></li>
+          <li><span class="pill go">идёт</span><span class="tx">Наработка на группах 7–10 человек<small>Перепроверяешь, заходя волей в поле заместителя. Понятно как расти — нужен объём</small></span></li>
+          <li><span class="pill"></span><span class="tx">Снимать все расстановки на камеру<small>Видео + транскрибация, чтобы разбирать с Евгенией Юрьевной то, что она не может объяснить в моменте</small></span></li>
+          <li><span class="pill"></span><span class="tx">Посмотреть в дар Венеры<small>Активировался, ты туда ещё не смотрел</small></span></li>
+          <li><span class="pill"></span><span class="tx">Прояснить с Бабаем<small>Имя, правила, цена — как в своё время с Рисханом</small></span></li>
+          <li><span class="pill"></span><span class="tx">Завести Евгении Юрьевне нейронку с доступами<small>Единственное невыполненное обещание человеку во всей выгрузке</small></span></li>
+          <li><span class="pill"></span><span class="tx">Обновить устаревшие документы<small>путь_развития, CLAUDE.md р.9, круги_и_холдинг — врут в четырёх местах</small></span></li>
+        </ul>
+      </div>
+
+      <div class="area">
+        <h4><span class="num">A3</span> Семья и дом</h4>
+        <p class="note">Свои 130 м² после съёмных 700. Дом в твоей модели — пятый член семьи и алтарь рода.</p>
+        <ul class="tasks">
+          <li class="flag"><span class="pill hot">горит</span><span class="tx">Кармический брак: активная забота о Юле<small>Задача этого года, названа прямо. Пока вместо этого ей достаются качели</small></span></li>
+          <li><span class="pill"></span><span class="tx">Милану на полупансион<small>Условие плана Юли: подъём, завтрак, садик, центр до обеда</small></span></li>
+          <li><span class="pill"></span><span class="tx">Убрать двор<small>Трава перед домом и вокруг, мусор везде. Запустил сильно</small></span></li>
+          <li><span class="pill"></span><span class="tx">Сделать угол памяти рода<small>Оркия, Расим, Ильдар. Сейчас его нет</small></span></li>
+          <li><span class="pill"></span><span class="tx">Вернуть контакт с домовым<small>Камушки в земле заброшены — он сам сказал</small></span></li>
+          <li><span class="pill"></span><span class="tx">Наполнить 6 канистр по 20 л бензином<small>Куплены. С бензином проблемы — пусть лежит</small></span></li>
+          <li><span class="pill"></span><span class="tx">Купить бесщёточный шуруповёрт<small>Насос от него работает; щёточный даёт искру — опасно</small></span></li>
+          <li><span class="pill go">идёт</span><span class="tx">Помощь Юле по дому<small>Покрасить, передвинуть — по её запросу</small></span></li>
+        </ul>
+      </div>
+
+      <div class="area">
+        <h4><span class="num">A4</span> Деньги семьи</h4>
+        <p class="note">Платёж упал впятеро после помощи родителей и залога дома отцом. Стало легче — но картина по-прежнему не сведена.</p>
+        <ul class="tasks">
+          <li class="flag"><span class="pill hot">горит</span><span class="tx">Посчитать, сколько нужно в месяц на семью<small>Не считалось ни разу. Это число — критерий «достаточно», без него нельзя выбрать цель</small></span></li>
+          <li class="flag"><span class="pill hot">горит</span><span class="tx">Структурировать долг Гели<small>Посчитать сумму, согласовать график. Сейчас неизвестно ни то, ни другое</small></span></li>
+          <li><span class="pill stop">стоит</span><span class="tx">Ввести «Суть.Деньги» в работу<small>Модуль готов, интеграция ZenMoney, не запущен</small></span></li>
+          <li><span class="pill"></span><span class="tx">Процедура: раз в четверг разносить платежи<small>Встаёт в уже существующую ось недели</small></span></li>
+          <li><span class="pill"></span><span class="tx">Объявить «даю-беру»<small>Еженедельная фиксированная выплата от каждого бизнеса. Закрывает открытый пункт 6.2 миссии — возврат не выстроен</small></span></li>
+          <li><span class="pill go">идёт</span><span class="tx">Проценты Юлиным родителям<small>Отцу — по возможности, он не торопит</small></span></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="circuit">
+    <div class="circuit-head">
+      <h3>Контур B · Источники</h3>
+      <span class="tag">кормят сейчас · дают ресурс на стройку</span>
+      <span class="rule">Правило контура: не развивать ради развития, а вынимать ресурс и высвобождать твоё время. Всё, что здесь делается руками, должно делаться чужими.</span>
+    </div>
+    <div class="areas">
+
+      <div class="area">
+        <h4><span class="num">B1</span> Суши Мама</h4>
+        <p class="note">Три филиала: Новоспасское генерит основное, два в Сызрани малоэффективны. УК раздута под больший масштаб. Одновременно — лучший полигон, какой можно придумать: логистика, закупка, звонки, клиенты, офисы, филиалы, производство, хранение, найм.</p>
+        <ul class="tasks">
+          <li class="flag"><span class="pill hot">горит</span><span class="tx">Вывести ~1 млн ₽ с расчётного счёта<small>Дивиденды, долгожданные. Помочь Римме с банковскими лимитами, вывести аккуратно</small></span></li>
+          <li><span class="pill"></span><span class="tx">Пересобрать маркетинг с нуля<small>Рекламный бюджет за год — ноль. До этого было агентство и отдельный человек, толка не было</small></span></li>
+          <li><span class="pill"></span><span class="tx">Замкнуть маркетинг на Венеру</span></li>
+          <li><span class="pill"></span><span class="tx">Найти человека на трафик и рекламу<small>Контент снимается, нового трафика нет</small></span></li>
+          <li><span class="pill"></span><span class="tx">Убрать Катю с зарплаты СМ</span></li>
+          <li><span class="pill"></span><span class="tx">Убрать Аню из СМ<small>Она исполнительный директор Изумрудиума</small></span></li>
+          <li><span class="pill go">идёт</span><span class="tx">Досократить кухню и административку</span></li>
+          <li><span class="pill go">идёт</span><span class="tx">Обкатать умные камеры<small>Реакция на пожар, транскрибация речи, анализ сказанного. Камеры уже стоят</small></span></li>
+          <li><span class="pill"></span><span class="tx">Обкатать телефонию для СБ<small>Выгрузка всех разговоров за день, транскрибация, сигнал при отклонении</small></span></li>
+        </ul>
+      </div>
+
+      <div class="area">
+        <h4><span class="num">B2</span> Изумрудиум</h4>
+        <p class="note">Магний 5-в-1 на два месяца. Высокий LTV: покупают — возвращаются много раз. Живёт на повторных покупках. Работает в ноль. Продукт заряженный, сделан красиво и с душой — но в поле видна личная травма.</p>
+        <ul class="tasks">
+          <li><span class="pill"></span><span class="tx">Налить трафик<small>Единственная настоящая проблема. Первые касания — дальше покупают сами, это протестировано</small></span></li>
+          <li><span class="pill"></span><span class="tx">Отливка свинцом под Изумрудиум<small>Снять личную травму. Инструмент есть — почему бы не использовать</small></span></li>
+          <li><span class="pill"></span><span class="tx">Распродать витамины до конца срока<small>Осталось около полутора лет</small></span></li>
+          <li><span class="pill"></span><span class="tx">Вывести из нуля в поток<small>Создать условия, чтобы он тоже мог зарабатывать — ты сам так о нём говоришь</small></span></li>
+        </ul>
+      </div>
+
+      <div class="area">
+        <h4><span class="num">B3</span> Тендеры · Николай</h4>
+        <p class="note">Он прокладка между заводом и заказчиком: освещение, крупные объекты, склады. Точная комплементарность — ты конструируешь и создаёшь ценность легко, но не продаёшь; у него ровно наоборот. Деньги в моменте.</p>
+        <ul class="tasks">
+          <li><span class="pill"></span><span class="tx">Собрать оффер одним списком<small>Сайты, системы управления, Юя на продажу</small></span></li>
+          <li><span class="pill"></span><span class="tx">Договориться о проценте<small>Продаёт по отдельности или пакетом — как пойдёт</small></span></li>
+          <li><span class="pill"></span><span class="tx">Провести Николаю расстановку<small>Он сам хочет. Заодно проверка партнёра в поле</small></span></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="circuit">
+    <div class="circuit-head">
+      <h3>Контур C · Стройка</h3>
+      <span class="tag">забирает ресурс · станет источником</span>
+      <span class="rule">Правило контура: здесь нельзя строить всё сразу — это прямо кормит узел 02. Из четырёх направлений одно ближе всех к деньгам и уже готово на девять десятых.</span>
+    </div>
+    <div class="areas">
+
+      <div class="area">
+        <h4><span class="num">C1</span> Суть · книги</h4>
+        <p class="note">Персональная книга под вопрос клиента, 30 000 ₽, себестоимость мала. Клиент задаёт вопрос — отвечаем целой книгой. Библиотека копится сама, из проданных.</p>
+        <ul class="tasks">
+          <li class="flag"><span class="pill hot">горит</span><span class="tx">Лендинг: экраны и подключение оплаты<small>Блокер всей ветки. Девочки просят, чтобы начать продавать</small></span></li>
+          <li><span class="pill stop">стоит</span><span class="tx">Докрутить консилиум из пяти агентов<small>Управляющий + рукопись, изображения, вёрстка, проверка</small></span></li>
+          <li><span class="pill stop">стоит</span><span class="tx">Поставить изготовление на рельсы<small>Раздавать можно начинать уже сейчас — сам сказал</small></span></li>
+          <li><span class="pill"></span><span class="tx">Раздать 200 книг по 1000 ₽<small>Взамен на видеоотзыв и разбор: понятно/непонятно, понравилось/нет. Тысяча — фильтр, а не цена</small></span></li>
+          <li><span class="pill"></span><span class="tx">Записать принятое решение<small>Библиотеки нет; книга под вопрос клиента. Решение принято и нигде не зафиксировано</small></span></li>
+        </ul>
+      </div>
+
+      <div class="area">
+        <h4><span class="num">C2</span> Суть · B2B</h4>
+        <p class="note">Юя и модули на продажу. Порог низкий: расходы до 100к, значит два клиента по 50к — и разработка идёт условно бесплатно. Живые примеры берутся из Суши Мамы, а не выпрашиваются у чужих компаний.</p>
+        <ul class="tasks">
+          <li><span class="pill"></span><span class="tx">Упаковать существующие модули в продаваемый вид<small>Видеомодуль, задачи, календарь, база знаний, почта — всё уже работает</small></span></li>
+          <li><span class="pill"></span><span class="tx">Первые продажи на сторону<small>Это уже помощь бизнесам, а не эксперимент</small></span></li>
+          <li><span class="pill go">идёт</span><span class="tx">Интеграция в СМ и Изумрудиум как витрина<small>Полигон и демо одновременно</small></span></li>
+          <li><span class="pill"></span><span class="tx">Довести экосистему до «щупалец всюду»<small>Часы, переписки, зарплата, объём задач, сроки, опоздания — на вход одному анализу</small></span></li>
+        </ul>
+      </div>
+
+      <div class="area">
+        <h4><span class="num">C3</span> Суть · расстановочный центр</h4>
+        <p class="note">Тольятти, 150–200 м²: open space под конференции, планёрки и расстановки плюс кабинеты под индивидуальную работу. В городе такого центра нет вообще. Субаренда кабинетов отбивает расходы даже при нулевой собственной активности.</p>
+        <ul class="tasks">
+          <li><span class="pill"></span><span class="tx">Найти помещение<small>Дальше — «толкнуть от меня, и оно по накатанной»</small></span></li>
+          <li><span class="pill"></span><span class="tx">Небольшой ремонт<small>В СМ уже обкатано</small></span></li>
+          <li><span class="pill"></span><span class="tx">Запустить субаренду кабинетов<small>Идея Евгении Юрьевны. Снимает риск по ~100к расходов</small></span></li>
+          <li><span class="pill"></span><span class="tx">Собрать пул приглашённых<small>Телесники, психологи, расстановщики. С вашими знаниями они эффективнее — и становятся партнёрами по книгам</small></span></li>
+          <li><span class="pill stop">стоит</span><span class="tx">Довести найденного телесника до разговора<small>Девочка, хочет и на расстановку. Ждёт центра</small></span></li>
+        </ul>
+      </div>
+
+      <div class="area">
+        <h4><span class="num">C4</span> Юя · умный дом</h4>
+        <p class="note">Тот же принцип, что и в B2B, только дома: нейронка собирает данные и управляет по результатам анализа. Сначала себе, потом на рынок.</p>
+        <ul class="tasks">
+          <li><span class="pill go">идёт</span><span class="tx">Wake-word «Слушай, Юя»<small>Модель обучается</small></span></li>
+          <li><span class="pill go">идёт</span><span class="tx">Сценарии дома<small>Ворота, проектор через Android, техника</small></span></li>
+          <li><span class="pill"></span><span class="tx">От скриптов к агенту с API-методами<small>Чтобы планировала сама, а не исполняла заранее прописанную команду</small></span></li>
+          <li><span class="pill go">идёт</span><span class="tx">Бэкап мака<small>Не делался ни разу; сейчас в работе</small></span></li>
+          <li><span class="pill"></span><span class="tx">Упаковать умный дом в продаваемое</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Люди <span class="badge">двойная роль: дар и функция</span></h2>
+  <p class="sub">Этого слоя в первой карте не было вообще — а у тебя всё идёт через людей, и по твоей же модели у каждого в круге две роли сразу. Последняя колонка — то, что висит именно на тебе.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Человек</th><th>Дар</th><th>Функция</th><th>Что висит</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Юля</td><td>ясновидение, хранительница поля</td><td>ГД Суши Мамы, разгружена</td><td>Кармический брак — активная забота весь год. <span class="hot">Получает твои эмоциональные качели.</span> Хочет центр, готова вставать раньше</td></tr>
+        <tr><td class="name">Катя Кадышева</td><td>слово: заговоры, наговоры</td><td>исполнительный директор Сути</td><td>Убрать зарплату из СМ. Мотивирована центром, а не IT — для неё сайт «скудновато», помещение ценно</td></tr>
+        <tr><td class="name">Аня</td><td>—</td><td>исполнительный директор Изумрудиума</td><td>Вывести из Суши Мамы. В свободном плавании, советы спрашивает редко — справляется</td></tr>
+        <tr><td class="name">Венера Польчик</td><td>активировался, не изучен</td><td>кандидат на маркетинг СМ</td><td>Посмотреть в дар. Замкнуть на неё маркетинг</td></tr>
+        <tr><td class="name">Римма Абитова</td><td>—</td><td>исполнительный директор СМ</td><td>Помочь с банковскими лимитами, вывести миллион. Ведёт то, что забрал у Юли</td></tr>
+        <tr><td class="name">Геля</td><td>—</td><td>франшизат Тольятти</td><td><span class="hot">Долг: сумма не посчитана, графика нет.</span> Единственное, о чём неприятно думать. Приезжает каждый четверг</td></tr>
+        <tr><td class="name">Нина</td><td>астрал, три помощника</td><td>круг</td><td>Каждый четверг</td></tr>
+        <tr><td class="name">Евгения Юрьевна</td><td>учитель поля, держит поле</td><td>наставник, вне штата</td><td><span class="hot">Обещана нейронка с доступами.</span> Обучает каждый четверг, полгода подряд. Подкинула идею субаренды</td></tr>
+        <tr><td class="name">Николай</td><td>—</td><td>продажи, тендеры</td><td>Оффер и процент. Хочет расстановку</td></tr>
+        <tr><td class="name">Телесник</td><td>тело</td><td>кандидат в круг</td><td>Найден, разговор ждёт центра. Хочет и на расстановку</td></tr>
+        <tr><td class="name">Павел</td><td>—</td><td>со-разработчик Сути</td><td>Ничего не висит</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Экономика <span class="badge">все числа в одном месте</span></h2>
+  <p class="sub">Здесь видно то, что не видно по отдельности: точные цифры соседствуют с двумя пустотами, и обе пустоты — ровно там, где принимается решение.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Что</th><th>Сколько</th><th>Комментарий</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Платёж по долгам</td><td class="num">500к → 100к / мес</td><td>Упал впятеро после помощи родителей и залога дома отцом</td></tr>
+        <tr><td class="name">Долг родителям</td><td class="num">~2 000 000 ₽</td><td>Платятся только проценты, и пока лишь Юлиным. Отец сказал: как будет возможность</td></tr>
+        <tr><td class="name">Кредит отца</td><td class="num">12–16 лет</td><td>Под залог его дома</td></tr>
+        <tr><td class="name">На счёте Суши Мамы</td><td class="num">~1 000 000 ₽</td><td>Излишки, дивиденды. Надо вывести — упирается в банковские лимиты</td></tr>
+        <tr><td class="name">Расходы Сути</td><td class="num">до 100 000 ₽ / мес</td><td>Весь контур разработки</td></tr>
+        <tr><td class="name">Порог окупаемости B2B</td><td class="num">2 клиента × 50к</td><td>И разработка идёт условно бесплатно. Это очень низкий порог</td></tr>
+        <tr><td class="name">Книга</td><td class="num">30 000 ₽</td><td>Себестоимость мала, ценность, по твоей оценке, огромная</td></tr>
+        <tr><td class="name">Обкатка книг</td><td class="num">200 × 1 000 ₽</td><td>Тысяча — фильтр готовности, не цена. Взамен видеоотзыв и разбор</td></tr>
+        <tr><td class="name">Расстановочный центр</td><td class="num">~100 000 ₽ / мес</td><td>Отбивается субарендой кабинетов даже без вашей активности</td></tr>
+        <tr><td class="name">Долг Гели</td><td class="num"><span class="miss">не посчитан</span></td><td>Ни суммы, ни графика. При этом это ровно то, от чего отворачиваешься</td></tr>
+        <tr><td class="name">Нужно на семью в месяц</td><td class="num"><span class="miss">не посчитано</span></td><td>Не считалось ни разу. Это число — критерий «достаточно» для всей системы</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Активы <span class="badge">построено и недоиспользуется</span></h2>
+  <p class="sub">Отдельный слой, потому что он объясняет, почему всё решаемо быстрее, чем кажется: почти ничего не надо строить с нуля.</p>
+  <div class="strips">
+    <div class="strip">
+      <h3>Инфраструктура</h3>
+      <p class="what">Работает, интегрировано с Юей</p>
+      <ul>
+        <li><b>Астро-движок</b> — Python, FastAPI</li>
+        <li><b>Таск-менеджер</b> — свой, Rails</li>
+        <li><b>Почта</b> — читает, анализирует, пишет, отправляет</li>
+        <li><b>Видеомодуль</b> — запись, транскрибация, всё в базу знаний</li>
+        <li><b>База знаний и календарь</b></li>
+        <li><b>«Суть.Деньги»</b> — готов, ZenMoney, не запущен</li>
+        <li><b>Консилиум из пяти агентов</b> для книг — не докручен</li>
+      </ul>
+    </div>
+    <div class="strip">
+      <h3>Способность</h3>
+      <p class="what">Главный актив, названный тобой первым</p>
+      <ul>
+        <li><b>Можем написать код любой сложности.</b> Любую штуку, безупречно</li>
+        <li><b>Доказательство:</b> у Риммы было 10–15 часов в месяц ручного переноса выписок Сбербанка в iiko — стало 5 минут, просто переносит файл</li>
+        <li>Это эталон эффекта, который можно повторять в любом процессе любого из бизнесов</li>
+      </ul>
+    </div>
+    <div class="strip">
+      <h3>Полигон</h3>
+      <p class="what">Почему именно Суши Мама</p>
+      <ul>
+        <li>Логистика, закупка, звонки, клиенты</li>
+        <li>Офисы, филиалы, производство, хранение</li>
+        <li>Найм</li>
+        <li><b>Всё это в одном месте</b> — и обкатка идёт на своём, а не выпрашивается у чужих</li>
+      </ul>
+    </div>
+    <div class="strip">
+      <h3>Поле</h3>
+      <p class="what">Инструменты, доступные не всем</p>
+      <ul>
+        <li><b>Канал</b> — лечение, диагностика, вход в поле организации</li>
+        <li><b>Расстановки на людях</b> — с перепроверкой через поле заместителя</li>
+        <li><b>Бабай</b> — защита по правилам</li>
+        <li><b>Наставник еженедельно</b> — Евгения Юрьевна</li>
+        <li><b>Круг с дарами</b> — то, что нельзя скопировать, в отличие от бизнес-модели</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Ритм <span class="badge">единственная работающая ось</span></h2>
+  <p class="sub">У тебя уже есть регулярность, которая держится полгода без всякой системы. Это готовая точка опоры — к ней дешевле пристроить новое, чем заводить отдельный ритуал.</p>
+  <div class="rhythm">
+    <div class="when">Каждый четверг</div>
+    <div class="what2">Обучение и расстановки с Евгенией Юрьевной<small>Полгода подряд, без срывов. Самая устойчивая структура в твоей неделе</small></div>
+    <div class="when">Каждый четверг</div>
+    <div class="what2">Приезжают Нина, Катя, Геля<small>Круг собирается сам — отдельно организовывать не нужно</small></div>
+    <div class="when">Каждый четверг · новое</div>
+    <div class="what2">Разнос финансов в «Суть.Деньги»<small>Встаёт в существующий день, а не требует нового. И Геля в этот день физически рядом</small></div>
+    <div class="when">Ежемесячно · выключено</div>
+    <div class="what2">Отливка как диагностика команды<small>Не делалась полгода. По твоей модели — регулярная процедура, а не разовое событие</small></div>
+    <div class="when">Ежедневно · отсутствует</div>
+    <div class="what2">Якорь дня<small>Единственный кандидат — садик к 8. Внешняя рамка, которую ставишь не ты</small></div>
+  </div>
+</section>
+
+<section>
+  <h2>Не проекты</h2>
+  <p class="sub">Тоже занимает место в голове, но в списке задач ему не место — иначе список выглядит вечно проваленным, и в него перестают заходить.</p>
+  <div class="strips">
+    <div class="strip">
+      <h3>Ожидания</h3>
+      <p class="what">Действие не твоё, но висит на тебе</p>
+      <ul>
+        <li><b>Геля</b> — долг. Платит плохо, сумма не посчитана, графика нет</li>
+        <li>Единственное настоящее ожидание во всей выгрузке. Ты никому не должен, всем ответил, ни перед кем не неловко — так что тревога не от завалов, а от отсутствия структуры</li>
+      </ul>
+    </div>
+    <div class="strip">
+      <h3>Регулярное</h3>
+      <p class="what">Повторяется вечно — не завершается, значит не проект</p>
+      <ul>
+        <li>Четверг: Евгения Юрьевна, круг, финансы</li>
+        <li>Ежемесячно: отливка</li>
+        <li>Ежедневно: якорь дня</li>
+      </ul>
+    </div>
+    <div class="strip">
+      <h3>Когда-нибудь</h3>
+      <p class="what">Не в работе. Лежит отдельно, чтобы не мозолило</p>
+      <ul>
+        <li><b>Свой садик</b> — с педагогами, понимающими поле, программы и кармические задачи. Обратная сторона названа тобой: без этих знаний воспитатель может делать хуже</li>
+        <li><b>Вернуть няню</b> — было лучше со старшей до просадки по деньгам</li>
+        <li><b>Свой мессенджер</b> — сотрудники ↔ клиенты</li>
+        <li><b>Умный дом на рынок</b></li>
+      </ul>
+    </div>
+    <div class="strip">
+      <h3>Закрыто</h3>
+      <p class="what">Больше не занимает места</p>
+      <ul>
+        <li><b>Суд по Суши Маме</b> — предупреждение, всё хорошо</li>
+        <li><b>Разгрузка Юли</b> — забрал, ведёт Римма</li>
+        <li><b>Головные боли после расстановок</b> — научился управлять</li>
+        <li><b>Рисхан</b> — освобождён от долгов, на его месте Бабай</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="next">
+  <h2>Проход 3 — что делаем дальше</h2>
+  <ol>
+    <li><b>Ты правишь эту карту.</b> Что не туда, что объединить, чего не хватает, что вообще не твоё, где я неверно связал причины.</li>
+    <li><b>Считаем два числа.</b> Сколько нужно на семью в месяц и сколько должна Геля. Оба — арифметика на полчаса, и оба сейчас блокируют возможность выбирать.</li>
+    <li><b>Формулируем 3–5 целей с датами.</b> Это пустая строка вертикали и вход в узел 02. Без неё любой список снова станет ровным.</li>
+    <li><b>Выбираем камни на квартал</b> — 3–7 проектов, остальные официально спят. Открывая систему, ты видишь не шестьдесят два пункта, а пять.</li>
+    <li><b>По каждому камню — одно следующее действие.</b> Только одно. Остальные шаги остаются заметкой внутри проекта, а не строчкой в списке.</li>
+    <li><b>И только теперь — в задачник.</b></li>
+  </ol>
+  <p class="warn">Порядок здесь и есть лечение. Если завести в «Суть» все шестьдесят два прямо сейчас, получится ровно то, от чего ты пришёл: подробный список, в который не заходят.</p>
+</section>
+
+<footer>
+  <span>Собрано из трёх порций голосовой выгрузки, 7 сентября 2026</span>
+  <span>Исходники дословно: <code>~/Desktop/mind-sweep.md</code></span>
+  <span>Источник правды — исходники, не эта карта</span>
+</footer>
+
+</div>
+</body>
+</html>
